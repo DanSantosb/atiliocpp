@@ -56,26 +56,21 @@ public:
     }
 
     void print(){ 
-        for (int i = 0; i < linhas; i++){ // anda pelas linhas
-            Node* atual_linha = head_linhas;
+    Node* atualLinha = head_linhas->abaixo;
+        while (atualLinha != head_linhas) { // Andar pelas linhas
+            Node* atual = atualLinha->direita;
 
-            for (int j = 1; j <= colunas; j++) { // anda pelas colunas
-                Node* atual = atual_linha->direita;
-
-                // Encontra o nó na posição correta
-                while (atual != head_linhas && atual->coluna < j) {
+            for (int j = 1; j <= colunas; j++) { // Andar pelas colunas
+                if (atual != atualLinha && atual->coluna == j) {
+                    cout << atual->valor << " ";
                     atual = atual->direita;
+                } else {
+                    cout << "0 ";
                 }
-            
-            if (atual != head_linhas && atual->coluna == j) { //verifica se tem valor
-                cout << atual->valor << " ";
-            } else {
-                // Caso contrário, imprime zero
-                cout << "0 ";
             }
-        }
-         cout << endl;
-         atual_linha = atual_linha->abaixo;
+
+            cout << endl;
+            atualLinha = atualLinha->abaixo;
         }
     }
 
@@ -146,18 +141,15 @@ public:
             atual = atual -> abaixo;
         }
 
-        while (atual -> coluna != c) { //procura a coluna correta
-            atual = atual -> direita;
-            if (atual -> direita = head_linhas){ //se o elemento a direita for a sentinela, retorna 0
-                return 0;
-            }
-            if (atual -> linha == l && atual->coluna == c) {//quando encontra, o retorna
-                    return atual->valor; 
-            }
+    Node* linhaAtual = atual->direita;
+    while (linhaAtual != atual) {
+        if (linhaAtual->coluna == c) {
+            return linhaAtual->valor;
         }
+        linhaAtual = linhaAtual->direita;
+    }
         return 0;
     }
-
 };  
 
 
