@@ -1,5 +1,5 @@
-#ifndef Node_H
-#define Node_H
+#ifndef NODE_H
+#define NODE_H
 #include <iostream>
 
 struct Node {
@@ -10,11 +10,12 @@ struct Node {
     double valor; 
 
     // construtor do node
-    Node( double valor, Node* direta = nullptr, Node* abaixo = nullptr, int linha = 0, int coluna = 0) {
-        double valor;
-        this-> direita = direita;
-        this-> abaixo = abaixo;
-
+    Node( double valor, Node* direita = nullptr, Node* abaixo = nullptr, int linha = 0, int coluna = 0) {
+        this->valor = valor;
+        this->direita = direita;
+        this->abaixo = abaixo;
+        this->linha = linha;
+        this->coluna = coluna;
     }
 };
 
