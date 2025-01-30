@@ -5,6 +5,7 @@
 
 using namespace std;
 
+// Função para ler uma matriz esparsa de um arquivo
 void readSparseMatrix(SparseMatrix& m, const string& texto) {
     ifstream arquivo(texto);
     if (!arquivo.is_open()) {
@@ -23,8 +24,24 @@ void readSparseMatrix(SparseMatrix& m, const string& texto) {
 
     arquivo.close();
 }
-void Soma(){}
-void Mult(){}
+
+// Função para somar duas matrizes
+SparseMatrix Soma(SparseMatrix& A, SparseMatrix& B) {
+    SparseMatrix C = A + B; // Usa o operador sobrecarregado
+    cout << "Matriz C (A + B):" << endl;
+    C.print();
+    return C; // Retorna a matriz resultante
+}
+
+// Função para multiplicar duas matrizes
+SparseMatrix Mult(SparseMatrix& A, SparseMatrix& B) {
+    SparseMatrix C = A * B; // Usa o operador sobrecarregado
+    cout << "Matriz C (A * B):" << endl;
+    C.print();
+    return C; // Retorna a matriz resultante
+}
+
+// Função para obter as dimensões de uma matriz a partir de um arquivo
 pair<int, int> Dimensions(const string& texto) {
     ifstream arquivo(texto);
     if (!arquivo) {
@@ -45,7 +62,11 @@ int main() {
     getline(cin, nome_arquivoA);
     nome_arquivoA += ".txt";
 
-    pair<int, int> dimensoesA = Dimensions(nome_arquivoA);//pega as dimensoes da matriz
+    pair<int, int> dimensoesA = Dimensions(nome_arquivoA);
+    if (dimensoesA.first == -1 || dimensoesA.second == -1) {
+        cout << "Erro ao ler as dimensões da matriz A." << endl;
+        return 1;
+    }
 
     SparseMatrix A(dimensoesA.first, dimensoesA.second);
     readSparseMatrix(A, nome_arquivoA);
@@ -55,6 +76,10 @@ int main() {
     nome_arquivoB += ".txt";
 
     pair<int, int> dimensoesB = Dimensions(nome_arquivoB);
+    if (dimensoesB.first == -1 || dimensoesB.second == -1) {
+        cout << "Erro ao ler as dimensões da matriz B." << endl;
+        return 1;
+    }
 
     SparseMatrix B(dimensoesB.first, dimensoesB.second);
     readSparseMatrix(B, nome_arquivoB);
@@ -63,6 +88,9 @@ int main() {
     A.print();
     cout << "Matriz B:" << endl;
     B.print();
+
+    Mult(A, B);
+    Soma(A, B);
 
     return 0;
 }
