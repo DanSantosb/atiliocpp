@@ -12,19 +12,6 @@ private:
     int colunas;
 public:
 
-    SparseMatrix(){
-        head_colunas = new Node(0, nullptr, nullptr, 0, 0);
-        head_linhas = new Node(0, nullptr, nullptr, 0, 0);
-
-        head_colunas -> direita = head_colunas;        
-        head_colunas -> abaixo = head_colunas;
-        head_linhas -> direita = head_linhas;
-        head_linhas -> abaixo = head_linhas;
-
-        linhas = 0;
-        colunas = 0;
-    }
-
     //recebe o numero de linhas e colunas, e analisa se os valores são validos
     SparseMatrix(int l, int c){
         if(l <= 0 || c <= 0){
@@ -37,7 +24,7 @@ public:
         head_colunas = new Node(0, nullptr, nullptr, 0, 0);
 
         Node* atual = head_linhas; // Criar um axiliar para conectar os sentinelas
-        for(int i = 0; i <= l; i++){
+        for(int i = 1; i <= l; i++){
             Node* novo = new Node(0, nullptr, nullptr, i, 0); //cria um novo sentinela para a linha
             atual -> abaixo = novo; // conecta os sentinelas das linhas
             novo -> direita = novo;
@@ -46,7 +33,7 @@ public:
         atual -> abaixo = head_linhas; // torna linha circular
 
         atual = head_colunas; //axiliar para conectar os sentinelas
-        for(int i = 0; i <= c; i++){
+        for(int i = 1; i <= c; i++){
             Node* novo = new Node(0, nullptr, nullptr, 0, i); //cria um novo sentinela para a coluna
             atual -> direita = novo; // conecta os sentinelas das colunas
             novo -> direita = novo;
@@ -115,19 +102,36 @@ public:
             atualLinha = atualLinha -> abaixo;
         }
 
+        Node* prevLinha = atualLinha;
+        while (prevLinha->direita != atualLinha && prevLinha->direita->coluna < c) {
+            prevLinha = prevLinha->direita;
+        }
+
+        // Verifica se já existe um nó na posição (l, c)
+        if (prevLinha->direita != atualLinha && prevLinha->direita->coluna == c) {
+            prevLinha->direita->valor = valor; // Atualiza o valor existente
+            return;
+        } 
+
         // Procura pela posição correta na coluna
         Node* atualColuna = head_colunas;
         while (atualColuna -> coluna != c) {
             atualColuna = atualColuna -> direita;
         }
 
+        Node* prevColuna = atualColuna;
+        while (prevColuna->abaixo != atualColuna && prevColuna->abaixo->linha < l) {
+            prevColuna = prevColuna->abaixo;
+        }        
+
         // Insere o novo valor
         Node* novo = new Node(valor, nullptr, nullptr, l, c);
-        novo -> direita = atualLinha -> direita;
-        atualLinha -> direita = novo;
+        novo->direita = prevLinha->direita;
+        prevLinha->direita = novo;
 
-        novo -> abaixo = atualColuna -> abaixo;
-        atualColuna -> abaixo = novo;
+        // Insere na coluna
+        novo->abaixo = prevColuna->abaixo;
+        prevColuna->abaixo = novo;
         }
     }
 
