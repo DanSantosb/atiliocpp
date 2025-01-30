@@ -5,12 +5,13 @@
 #include "Node.h"
 using namespace std;
 
+
 class SparseMatrix {
 private:
-    Node* head_linhas;  // nó sentinela das linhas
-    Node* head_colunas; // nó sentinela das colunas
-    int linhas;         // linhas da matriz
-    int colunas;        // colunas da matriz
+    Node* head_linhas;  // sentinela das linhas
+    Node* head_colunas; // sentinela das colunas
+    int linhas;         
+    int colunas;        
 
 public:
     //recebe o numero de linhas e colunas, e analisa se os valores são validos
@@ -26,6 +27,7 @@ public:
         head_linhas = new Node(0, nullptr, nullptr, 0, 0);
         head_colunas = new Node(0, nullptr, nullptr, 0, 0);
 
+       
         Node* atual = head_linhas;
         for(int i = 1; i <= l; i++){
             Node* novo = new Node(0, nullptr, nullptr, i, 0); //cria um novo sentinela para a linha
@@ -52,10 +54,10 @@ public:
 
     void print() {
         Node* atualLinha = head_linhas->abaixo;
-        while (atualLinha != head_linhas) { // Andar pelas linhas
+        while (atualLinha != head_linhas) { // Anda pelas linhas
             Node* atual = atualLinha->direita;
 
-            for (int j = 1; j <= colunas; j++) {   // Andar pelas colunas
+            for (int j = 1; j <= colunas; j++) {   // Anda pelas colunas
                 if (atual != atualLinha && atual->coluna == j) {
                     cout << atual->valor << " ";
                     atual = atual->direita;
@@ -66,27 +68,6 @@ public:
             cout << endl;
             atualLinha = atualLinha->abaixo;
         }
-    }
-
-    void desalocar() {
-        Node* linha_atual = head_linhas -> abaixo;
-        while (linha_atual != head_linhas) { //percorre a matriz
-            Node* atual = linha_atual;
-            linha_atual = linha_atual -> abaixo;
-
-            Node* coluna_atual = atual -> direita;
-            while (coluna_atual != atual) {
-                Node* aux = coluna_atual;
-                coluna_atual = coluna_atual -> direita;
-                delete aux;
-            }
-            delete atual;
-        }
-        // libera os sentinelas
-        delete head_linhas;
-        delete head_colunas;
-        head_linhas = nullptr;
-        head_colunas = nullptr;
     }
 
     void inserir(int l, int c, double valor) {
@@ -146,7 +127,25 @@ public:
         }
     }
 
-    
-};
+    void desalocar() {
+        Node* linha_atual = head_linhas -> abaixo;
+        while (linha_atual != head_linhas) {
+            Node* atual = linha_atual;
+            linha_atual = linha_atual -> abaixo;
 
+            Node* coluna_atual = atual -> direita;
+            while (coluna_atual != atual) {
+                Node* aux = coluna_atual;
+                coluna_atual = coluna_atual -> direita;
+                delete aux;
+            }
+            delete atual;
+        }
+        // libera os sentinelas
+        delete head_linhas;
+        delete head_colunas;
+        head_linhas = nullptr;
+        head_colunas = nullptr;
+    }
+};
 #endif
