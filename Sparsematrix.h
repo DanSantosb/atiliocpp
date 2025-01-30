@@ -4,43 +4,129 @@
 #include <iostream>
 #include "Node.h"
 using namespace std;
+
 class SparseMatrix {
 private:
-    Node* head_linhas; // ponteiro para o sentinela das linhas
-    Node* head_colunas; // ponteiro para o sentinela das colunas
-    int linhas;
-    int colunas;
+    Node* head_linhas;  // Sentinela das linhas
+    Node* head_colunas; // Sentinela das colunas
+    int linhas;      
+    int colunas;        
 
 public:
-    SparseMatrix(int l, int c) : linhas(l), colunas(c) {
+
+    SparseMatrix(int l, int c) {
         if (l <= 0 || c <= 0) {
-            throw std::invalid_argument("ERRO: Valores de linha e(ou) coluna invalidos, tente novamente.");
+            throw invalid_argument("ERRO: Valores de linha e(ou) coluna invalidos, tente novamente.");
         }
 
-        head_linhas = new Node(0, nullptr, nullptr, 0, 0);
-        head_colunas = new Node(0, nullptr, nullptr, 0, 0);
+        linhas = l;
+        colunas = c;
 
+        // cria sentinelas para as linhas e colunas
+        head_linhas = new Node(0, nullptr, nullptr, 0, 0);
+        head_colunas = new Node(0, nullptr, nullptr, 0, 0); 
+
+       
         Node* atual = head_linhas;
         for (int i = 1; i <= l; i++) {
-            Node* novo = new Node(0, nullptr, nullptr, i, 0);
-            atual->abaixo = novo;
-            novo->direita = novo;
+            Node* novo = new Node(0, nullptr, nullptr, i, 0); // cria um novo sentinela para a linha
+            atual->abaixo = novo; // conecta os sentinelas das linhas
+            novo->direita = novo; 
             atual = novo;
         }
-        atual->abaixo = head_linhas;
+        atual->abaixo = head_linhas; // Torna circular
 
+      
         atual = head_colunas;
         for (int i = 1; i <= c; i++) {
-            Node* novo = new Node(0, nullptr, nullptr, 0, i);
-            atual->direita = novo;
+            Node* novo = new Node(0, nullptr, nullptr, 0, i); // Cria um novo sentinela para a coluna
+            atual->direita = novo; // conecta os sentinelas das colunas
             novo->abaixo = novo;
             atual = novo;
         }
-        atual->direita = head_colunas;
+        atual->direita = head_colunas;  // Torna circular
     }
 
+    // Destrutor
     ~SparseMatrix() {
         desalocar();
+    }
+
+    void inserir(int l, int c, double valor) {
+        if (l > linhas || c > colunas || l <= 0 || c <= 0) {
+            throw invalid_argument("ERRO: Valores de linha e(ou) coluna invalidos, tente novamente.");
+        } else if (valor == 0) {
+            return; 
+        }
+        // procura a linha
+        Node* atualLinha = head_linhas;
+        while (atualLinha->linha != l) {
+            atualLinha = atualLinha->abaixo;
+        }
+        // Encontra a posição correta na linha
+        Node* prevLinha = atualLinha;
+        while (prevLinha->direita != atualLinha && prevLinha->direita->coluna < c) {
+            prevLinha = prevLinha->direita;
+        }
+        // Verifica se já existe um valor na posição (l, c)
+        if (prevLinha->direita != atualLinha && prevLinha->direita->coluna == c) {
+            prevLinha->direita->valor = valor; // Atualiza o valor
+            return;
+        }
+        // procura a coluna
+        Node* atualColuna = head_colunas;
+        while (atualColuna->coluna != c) {
+            atualColuna = atualColuna->direita;
+        }
+        // Encontra a posição correta na coluna
+        Node* prevColuna = atualColuna;
+        while (prevColuna->abaixo != atualColuna && prevColuna->abaixo->linha < l) {
+            prevColuna = prevColuna->abaixo;
+        }
+
+        // Cria o novo nó
+        Node* novo = new Node(valor, prevLinha->direita, prevColuna->abaixo, l, c);
+        prevLinha->direita = novo;
+        prevColuna->abaixo = novo;
+    }
+
+    double devolver(int l, int c) {
+        if (l <= 0 || l > linhas || c <= 0 || c > colunas) {
+            throw invalid_argument("ERRO: Valores de linha e(ou) coluna invalidos, tente novamente.");
+        }
+        // procura a linha correta
+        Node* atualLinha = head_linhas;
+        while (atualLinha->linha != l) {
+            atualLinha = atualLinha->abaixo;
+        }
+        // procura a coluna correta
+        Node* atual = atualLinha->direita;
+        while (atual != atualLinha) {
+            if (atual->coluna == c) {
+                return atual->valor;
+            }
+            atual = atual->direita;
+        }
+        // se não achar nada retorna 0
+        return 0;
+    }
+
+    void print() {
+        Node* atualLinha = head_linhas->abaixo;
+        while (atualLinha != head_linhas) { // Percorre as linhas
+            Node* atual = atualLinha->direita;
+
+            for (int j = 1; j <= colunas; j++) { // Percorre as colunas
+                if (atual != atualLinha && atual->coluna == j) {
+                    cout << atual->valor << " ";
+                    atual = atual->direita;
+                } else {
+                    cout << "0 ";
+                }
+            }
+            cout << endl;
+            atualLinha = atualLinha->abaixo;
+        }
     }
 
     void desalocar() {
@@ -55,94 +141,17 @@ public:
                 coluna_atual = coluna_atual->direita;
                 delete aux;
             }
-
             delete atual;
         }
 
+        // Libera os sentinelas
         delete head_linhas;
         delete head_colunas;
         head_linhas = nullptr;
         head_colunas = nullptr;
     }
 
-    void inserir(int l, int c, double valor) {
-        if (l <= 0 || l > linhas || c <= 0 || c > colunas) {
-            throw std::invalid_argument("ERRO: Valores de linha e(ou) coluna invalidos, tente novamente.");
-        }
-        if (valor == 0) {
-            return;
-        }
-
-        Node* novo = new Node(valor, nullptr, nullptr, l, c);
-
-        // Inserir na linha
-        Node* linha_atual = head_linhas;
-        while (linha_atual->linha != l) {
-            linha_atual = linha_atual->abaixo;
-        }
-
-        Node* coluna_atual = linha_atual;
-        while (coluna_atual->direita != linha_atual && coluna_atual->direita->coluna < c) {
-            coluna_atual = coluna_atual->direita;
-        }
-        novo->direita = coluna_atual->direita;
-        coluna_atual->direita = novo;
-
-        // Inserir na coluna
-        Node* coluna_sent = head_colunas;
-        while (coluna_sent->coluna != c) {
-            coluna_sent = coluna_sent->direita;
-        }
-
-        Node* linha_coluna = coluna_sent;
-        while (linha_coluna->abaixo != coluna_sent && linha_coluna->abaixo->linha < l) {
-            linha_coluna = linha_coluna->abaixo;
-        }
-        novo->abaixo = linha_coluna->abaixo;
-        linha_coluna->abaixo = novo;
-    }
-
-    double devolver(int l, int c) {
-        if (l <= 0 || l > linhas || c <= 0 || c > colunas) {
-            throw std::invalid_argument("ERRO: Valores de linha e(ou) coluna invalidos, tente novamente.");
-        }
-
-        Node* linha_atual = head_linhas;
-        while (linha_atual->linha != l) {
-            linha_atual = linha_atual->abaixo;
-        }
-
-        Node* coluna_atual = linha_atual->direita;
-        while (coluna_atual != linha_atual) {
-            if (coluna_atual->coluna == c) {
-                return coluna_atual->valor;
-            }
-            coluna_atual = coluna_atual->direita;
-        }
-
-        return 0;
-    }
-
-    void print() {
-        Node* linha_atual = head_linhas->abaixo;
-        while (linha_atual != head_linhas) {
-            Node* coluna_atual = linha_atual->direita;
-
-            for (int j = 1; j <= colunas; j++) {
-                if (coluna_atual != linha_atual && coluna_atual->coluna == j) {
-                    std::cout << coluna_atual->valor << " ";
-                    coluna_atual = coluna_atual->direita;
-                } else {
-                    std::cout << "0 ";
-                }
-            }
-
-            std::cout << std::endl;
-            linha_atual = linha_atual->abaixo;
-        }
-    }
-
-    SparseMatrix operator+(const SparseMatrix& outra) {
+        SparseMatrix operator+(const SparseMatrix& outra) {
     if (this->linhas != outra.linhas || this->colunas != outra.colunas) {
         cout<< "ERRO: As matrizes devem ter as mesmas dimensões para serem somadas.";
     }
@@ -216,6 +225,7 @@ public:
 
         return resultado;
     }
+
 };
 
-#endif // SPARSE_MATRIX_H
+#endif
