@@ -2,24 +2,19 @@
 #include <string>
 #include <fstream>
 #include "Sparsematrix.h"
-#include "Node.h"
 
 using namespace std;
-// Função para ler uma matriz esparsa de um arquivo
-void readSparseMatrix(SparseMatrix& m, const string& matrizA) {
-    ifstream arquivo(matrizA);
-    
-    if (!arquivo.is_open()) { //verifica se o arquiuvo foi aberto corretamente 
-        cout << "Erro ao abrir o arquivo"<<endl;
+
+void readSparseMatrix(SparseMatrix& m, const string& texto) {
+    ifstream arquivo(texto);
+    if (!arquivo.is_open()) {
+        cout << "Erro ao abrir o arquivo " << texto << endl;
         return;
     }
 
-    //bloco que verifica o formato da matrix
     int linhas, colunas;
     arquivo >> linhas >> colunas;
-    m = SparseMatrix(linhas, colunas);
 
-    //bloco de posição e valor dos produtos da matrix
     int i, j;
     double valor;
     while (arquivo >> i >> j >> valor) {
@@ -27,35 +22,47 @@ void readSparseMatrix(SparseMatrix& m, const string& matrizA) {
     }
 
     arquivo.close();
+}
+void Soma(){}
+void Mult(){}
+pair<int, int> Dimensions(const string& texto) {
+    ifstream arquivo(texto);
+    if (!arquivo) {
+        return {-1, -1}; 
+    }
 
-    
+    int linhas, colunas;
+    arquivo >> linhas >> colunas;
+    arquivo.close();
+
+    return {linhas, colunas};
 }
 
-
 int main() {
-    SparseMatrix A, B;
-    fstream arquivo;
-    string horizonte;
+    string nome_arquivoA, nome_arquivoB;
 
-    readSparseMatrix(A, "matrizA.txt");
-    readSparseMatrix(B, "matrizB.txt");
+    cout << "Olá, digite o nome do arquivo referente à Matriz (A) a ser aberto." << endl;
+    getline(cin, nome_arquivoA);
+    nome_arquivoA += ".txt";
 
-    arquivo.open("matrizA.txt", fstream::in);
-    if (arquivo.is_open()){
-        while (getline(arquivo,horizonte)){//le a linha do arquivo e add na variavel linha
-            cout<<horizonte<<endl;
-        }
-    }else{
-        cout<<"erro"<<endl;
-    }
-    arquivo.close();
+    pair<int, int> dimensoesA = Dimensions(nome_arquivoA);//pega as dimensoes da matriz
+
+    SparseMatrix A(dimensoesA.first, dimensoesA.second);
+    readSparseMatrix(A, nome_arquivoA);
+
+    cout << "Olá, digite o nome do arquivo referente à Matriz (B) a ser aberto." << endl;
+    getline(cin, nome_arquivoB);
+    nome_arquivoB += ".txt";
+
+    pair<int, int> dimensoesB = Dimensions(nome_arquivoB);
+
+    SparseMatrix B(dimensoesB.first, dimensoesB.second);
+    readSparseMatrix(B, nome_arquivoB);
 
     cout << "Matriz A:" << endl;
     A.print();
-
-    //cout << "Matriz B:" << endl;
-    //B.print();
+    cout << "Matriz B:" << endl;
+    B.print();
 
     return 0;
 }
-
