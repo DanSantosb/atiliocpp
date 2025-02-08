@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
+#include <sstream>
 #include "Sparsematrix.h"
 
 using namespace std;
@@ -56,7 +58,9 @@ pair<int, int> Dimensions(const string& texto) {
 }
 
 int main() {
-    string nome_arquivoA, nome_arquivoB;
+    vector <SparseMatrix> matrizes;
+    int posicao = 0;
+    /*string nome_arquivoA, nome_arquivoB;
 
     cout << "Olá, digite o nome do arquivo referente à Matriz (A) a ser aberto." << endl;
     getline(cin, nome_arquivoA);
@@ -91,6 +95,35 @@ int main() {
 
     Mult(A, B);
     Soma(A, B);
+    */
+
+    while(true) {
+		string comando, token;
+		getline(cin, comando);
+		stringstream ss{ comando };
+        ss >> token;
+
+        cout << "$" << ss.str() << endl;
+
+        if(token == "create") {
+			int l, c;
+            ss >> l >> c;
+			matrizes.emplace_back(l, c);
+            cout << "Matriz de tamanho:" << l << "x" << c << " criada na posição " << matrizes.size() - 1 << endl;
+		}
+		// exit
+		if(token == "exit") {
+			matrizes.clear();
+			break;
+		}
+
+        if(token == "print") {
+            int x;
+            ss >> x;
+			matrizes[x].print();
+			break;
+		}
+    }
 
     return 0;
 }
