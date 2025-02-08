@@ -153,7 +153,7 @@ public:
 
     SparseMatrix operator+(const SparseMatrix& outra) {
     if (this->linhas != outra.linhas || this->colunas != outra.colunas) {
-        cout<< "ERRO: As matrizes devem ter as mesmas dimensões para serem somadas.";
+        throw invalid_argument("ERRO: As matrizes devem ter as mesmas dimensões para serem somadas.");
     }
 
     SparseMatrix resultado(this->linhas, this->colunas);
