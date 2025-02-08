@@ -123,6 +123,15 @@ int main() {
 			matrizes[x].print();
 			break;
 		}
+
+	if(token == "inserir"){
+            int x, c, l, v;
+            ss >> x >> c >> l >> v;
+            
+            matrizes[x].inserir(c, l, v);
+
+            cout << "o valor: " << v << ", foi adicionado na linha: " << l << ",e coluna: " << c << endl;
+        }
     }
 
     return 0;
