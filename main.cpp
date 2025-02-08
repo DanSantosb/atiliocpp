@@ -58,8 +58,7 @@ pair<int, int> Dimensions(const string& texto) {
 }
 
 int main() {
-    vector <SparseMatrix> matrizes;
-    int posicao = 0;
+    vector <SparseMatrix*> matrizes;
     /*string nome_arquivoA, nome_arquivoB;
 
     cout << "Olá, digite o nome do arquivo referente à Matriz (A) a ser aberto." << endl;
@@ -108,7 +107,7 @@ int main() {
         if(token == "create") {
 			int l, c;
             ss >> l >> c;
-			matrizes.emplace_back(l, c);
+            matrizes.push_back(new SparseMatrix(l, c));
             cout << "Matriz de tamanho:" << l << "x" << c << " criada na posição " << matrizes.size() - 1 << endl;
 		}
 		// exit
@@ -120,18 +119,22 @@ int main() {
         if(token == "print") {
             int x;
             ss >> x;
-			matrizes[x].print();
+            cout << "x---------------------------------------------x" << endl;
+			matrizes[x]->print();
+            cout << "x---------------------------------------------x" << endl;
+
 			break;
 		}
 
-	if(token == "inserir"){
+        if(token == "inserir"){
             int x, c, l, v;
             ss >> x >> c >> l >> v;
             
-            matrizes[x].inserir(c, l, v);
+            matrizes[x]->inserir(c, l, v);
 
-            cout << "o valor: " << v << ", foi adicionado na linha: " << l << ",e coluna: " << c << endl;
+            cout << "o valor: " << v << ", foi adicionado na linha: " << l << ", e coluna: " << c << endl;
         }
+
     }
 
     return 0;
