@@ -177,11 +177,12 @@ int main() {
             cout << "x---------------------------------------------x" << endl;
 
         }else if (token == "Limparfull"){
-            while(!matrizes.empty()){
-                delete matrizes[matrizes.size() - 1];
-                matrizes.pop_back();
+            for(int i = matrizes.size() - 1; i >= 0; i--){
+               matrizes[i]->desalocar;
+	       delete matrizes[i];
+               matrizes.pop_back();
             }
-
+	    cout << "limpeza total feita com sucesso!" <<endl;		
         }else if(token == "Help"){
             cout<<"------------------------------------------------------------"<<endl;
             cout<<"Criar:       Cria a Matriz"<<endl;
