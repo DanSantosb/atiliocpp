@@ -1,3 +1,4 @@
+//João Victor de Sousa Medeiros & Danilo Santos Batista
 #ifndef SPARSE_MATRIX_H
 #define SPARSE_MATRIX_H
 
