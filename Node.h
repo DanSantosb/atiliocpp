@@ -1,3 +1,4 @@
+//João Victor de Sousa Medeiros & Danilo Santos Batista
 #ifndef NODE_H
 #define NODE_H
 #include <iostream>
